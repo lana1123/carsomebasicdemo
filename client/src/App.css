@@ -37,6 +37,11 @@
   font-size: 16px;
 }
 
+div .react-datepicker__time-container--with-today-button {
+  position: absolute;
+  right: -85px;
+}
+
 /* input {
   text-align: center;
   border: none;

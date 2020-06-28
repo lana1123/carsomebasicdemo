@@ -27,60 +27,69 @@ const Home = (props) => {
 
   //to check if the selected slot has already been booked. if yes, ask to choose another slot. else, proceed with the booking
   const handleClick = () => {
-    setCurrent_datetime(current_datetime);
-    //cannot click submit if no date is selected
-    if (!current_datetime) {
-      setCurrent_datetime(null);
-      return;
-    }
-    const current_datetimeString = current_datetime.toString();
-    const currentDate = current_datetime.toString().split(" ")[2];
-    const currentHour = current_datetime.toString().split(" ")[4].split(":")[0];
+    if (!authContext.isAuthenticated) setSlotStatus("not logged in");
+    else {
+      setCurrent_datetime(current_datetime);
+      //cannot click submit if no date is selected
+      if (!current_datetime) {
+        setCurrent_datetime(null);
+        return;
+      }
+      const current_datetimeString = current_datetime.toString();
+      const currentDate = current_datetime.toString().split(" ")[2];
+      const currentHour = current_datetime
+        .toString()
+        .split(" ")[4]
+        .split(":")[0];
 
-    const today = new Date();
-    const date = today.getDate();
-    const hour = today.getHours();
+      const today = new Date();
+      const date = today.getDate();
+      const hour = today.getHours();
 
-    if (currentDate === date && currentHour <= hour) {
-      setSlotStatus("invalid");
-    } else {
-      if (appointments) {
-        appointments.map((appointment) => {
-          if (appointment.slot_datetime) {
-            setSlotStatus("existing");
-            return;
-          } else {
-            AppointmentService.checkAppointments(current_datetimeString).then(
-              (data) => {
-                if (data.length >= 4) {
-                  setSlotStatus("full");
-                } else if (
-                  data.length >= 2 &&
-                  current_datetime.toString().split(" ")[0] !== "Sat"
-                ) {
-                  setSlotStatus("full");
-                } else {
-                  AppointmentService.postAppointment({
-                    slot_datetime: current_datetimeString,
-                  }).then((data) => {
-                    const { slot_datetime } = data;
-                    if (slot_datetime) {
+      if (currentDate === date && currentHour <= hour) {
+        setSlotStatus("invalid");
+      } else {
+        if (appointments) {
+          appointments.map((appointment) => {
+            if (appointment.slot_datetime) {
+              setSlotStatus("existing");
+              return;
+            } else {
+              AppointmentService.checkAppointments(current_datetimeString).then(
+                (data) => {
+                  if (data.length >= 4) {
+                    setSlotStatus("full");
+                  } else if (
+                    data.length >= 2 &&
+                    current_datetime.toString().split(" ")[0] !== "Sat"
+                  ) {
+                    setSlotStatus("full");
+                  } else {
+                    AppointmentService.postAppointment({
+                      slot_datetime: current_datetimeString,
+                    }).then((data) => {
+                      const { slot_datetime } = data;
+                      if (slot_datetime) {
+                        setSlotStatus("available");
+                      } else {
+                        setSlotStatus("error");
+                        setMessage(message);
+                      }
+                    });
+                    AppointmentService.postAppointmentUser(
+                      appointment.username,
+                      {
+                        slot_datetime: current_datetimeString,
+                      }
+                    ).then((data) => {
                       setSlotStatus("available");
-                    } else {
-                      setSlotStatus("error");
-                      setMessage(message);
-                    }
-                  });
-                  AppointmentService.postAppointmentUser(appointment.username, {
-                    slot_datetime: current_datetimeString,
-                  }).then((data) => {
-                    setSlotStatus("available");
-                  });
+                    });
+                  }
                 }
-              }
-            );
-          }
-        });
+              );
+            }
+          });
+        }
       }
     }
   };
@@ -100,6 +109,8 @@ const Home = (props) => {
       return "An error has occurred. Kindly try again later";
     } else if (slotStatus === "full") {
       return "This slot is not available. Kindly choose another slot";
+    } else if (slotStatus === "not logged in") {
+      return "Kindly register and login to make an appointment";
     } else {
       return "(No date selected yet)";
     }
