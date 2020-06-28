@@ -33,6 +33,6 @@ if (process.env.NODE_ENV === "production") {
 }
 
 //Listening
-app.listen(8000, () => {
+app.listen(process.env.PORT || 8000, () => {
   console.log("Express server started");
 });
