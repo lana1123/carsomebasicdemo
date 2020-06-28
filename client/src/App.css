@@ -124,6 +124,10 @@ div
     text-align: center;
   }
 
+  div .react-datepicker-wrapper {
+    width: 100%;
+  }
+
   .datepicker-container input {
     width: 100%;
     margin-left: 0;
