@@ -1,0 +1,39 @@
+.appointment-container {
+  box-sizing: border-box;
+  margin: 0;
+  font-family: "Ubuntu", sans-serif;
+  border: 0;
+  background-image: url("../assets/hero-image.jpg");
+  background-repeat: no-repeat;
+  background-color: black;
+  background-size: cover;
+  background-position: 0;
+  width: 100%;
+  min-height: 100vh;
+  display: float;
+}
+
+.appointment-content {
+  width: 35%;
+  margin-left: 58%;
+  margin-top: 0%;
+  padding-top: 80px;
+  color: white;
+}
+
+.appointment-content-container h1 {
+  color: white;
+}
+
+.appointment {
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .appointment-content {
+    width: 90%;
+    margin: auto;
+    padding-top: 40px;
+    color: white;
+  }
+}
