@@ -93,6 +93,14 @@ div .react-datepicker__time-container--with-today-button {
   /* border: 2px solid black; */
 }
 
+div
+  .react-datepicker__time-container
+  .react-datepicker__time
+  .react-datepicker__time-box
+  ul.react-datepicker__time-list {
+  min-height: 225px;
+}
+
 @media (max-width: 768px) {
   .App {
     border: 0;
