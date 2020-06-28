@@ -118,7 +118,7 @@ div .react-datepicker__time-container--with-today-button {
 
   .datepicker-container input {
     width: 100%;
-    margin: 0 auto;
+    margin-left: 0;
     padding: 0;
     height: 30px;
     text-align: center;

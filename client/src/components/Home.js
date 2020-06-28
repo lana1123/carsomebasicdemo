@@ -133,6 +133,19 @@ const Home = (props) => {
             maxDate={addDays(new Date(), 20)}
             filterDate={(date) => date.getDay() !== 0}
             showTimeSelect
+            popperClassName="some-custom-class"
+            popperPlacement="top-end"
+            popperModifiers={{
+              offset: {
+                enabled: true,
+                offset: "-172px, 0px",
+              },
+              preventOverflow: {
+                enabled: true,
+                escapeWithReference: false,
+                boundariesElement: "viewport",
+              },
+            }}
             minTime={setHours(setMinutes(new Date(), 0), 9)}
             maxTime={setHours(setMinutes(new Date(), 30), 16)}
             dateFormat="dd/MM/yyyy h:mm aa"
