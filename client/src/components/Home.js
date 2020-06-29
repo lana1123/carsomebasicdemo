@@ -15,6 +15,7 @@ const Home = (props) => {
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
+    setSlotStatus("not logged in");
     AppointmentService.getAppointment(authContext.user.username).then(
       (data) => {
         if (authContext.isAuthenticated) {
