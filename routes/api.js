@@ -3,7 +3,6 @@ const router = express.Router();
 const passport = require("passport");
 const passportConfig = require("../passport");
 const JWT = require("jsonwebtoken");
-const Slot = require("../models/Slot");
 const User = require("../models/User");
 const UserSession = require("../models/UserSession");
 
@@ -103,39 +102,7 @@ router.get(
   }
 );
 
-//Gets all available slots
-router.get(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const slot = await Slot.find();
-      res.json(slot);
-    } catch (err) {
-      res.json({ message: err });
-    }
-  }
-);
-
-//Book a slot (add a slot in Slot db and update User db)
-//add slot in Slot db
-router.post(
-  "/bookSlot",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    const slot = new Slot({
-      slot_datetime: req.body.slot_datetime,
-    });
-    try {
-      const submitSlot = await slot.save();
-      res.json(submitSlot);
-    } catch (err) {
-      res.json({ message: err });
-    }
-  }
-);
-
-//update User db
+//update slottime in User db
 router.post(
   "/updateUser/:username",
   passport.authenticate("jwt", { session: false }),
@@ -162,6 +129,32 @@ router.post(
   }
 );
 
+//Cancel slottime in User db
+router.post(
+  "/updateUser/cancelSlot/:username",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    User.findOneAndUpdate(
+      { username: req.params.username },
+      { slot_datetime: "" },
+      (err, user) => {
+        if (err) {
+          res.status(500).json({
+            message: { msgBody: "Error has occured", msgError: true },
+          });
+        } else {
+          res.status(201).json({
+            message: {
+              msgBody: "Slot successfully cancelled for user",
+              msgError: false,
+            },
+          });
+        }
+      }
+    );
+  }
+);
+
 //Check slot for that user
 router.get(
   "/userSlot/:username",
@@ -178,14 +171,16 @@ router.get(
   }
 );
 
-//Check specific slot
+//Check slots in user db
 router.get(
-  "/:slotTime",
+  "/userSlot/slot/:slotTime",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const checkSlot = await Slot.find({ slot_datetime: req.params.slotTime });
-      res.json(checkSlot);
+      const checkUserSlot = await User.find({
+        slot_datetime: req.params.slotTime,
+      });
+      res.json(checkUserSlot);
     } catch (err) {
       res.json({ message: err });
     }

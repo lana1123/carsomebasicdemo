@@ -17,10 +17,10 @@ const Home = (props) => {
   useEffect(() => {
     AppointmentService.getAppointment(authContext.user.username).then(
       (data) => {
-        if (data) {
+        if (authContext.isAuthenticated) {
           setAppointments(data);
           setSlotStatus("initialize");
-        }
+        } else setSlotStatus("not logged in");
       }
     );
   }, []);
@@ -55,38 +55,24 @@ const Home = (props) => {
               setSlotStatus("existing");
               return;
             } else {
-              AppointmentService.checkAppointments(current_datetimeString).then(
-                (data) => {
-                  if (data.length >= 4) {
-                    setSlotStatus("full");
-                  } else if (
-                    data.length >= 2 &&
-                    current_datetime.toString().split(" ")[0] !== "Sat"
-                  ) {
-                    setSlotStatus("full");
-                  } else {
-                    AppointmentService.postAppointment({
-                      slot_datetime: current_datetimeString,
-                    }).then((data) => {
-                      const { slot_datetime } = data;
-                      if (slot_datetime) {
-                        setSlotStatus("available");
-                      } else {
-                        setSlotStatus("error");
-                        setMessage(message);
-                      }
-                    });
-                    AppointmentService.postAppointmentUser(
-                      appointment.username,
-                      {
-                        slot_datetime: current_datetimeString,
-                      }
-                    ).then((data) => {
-                      setSlotStatus("available");
-                    });
-                  }
+              AppointmentService.getAllAppointmentBySlot(
+                current_datetimeString
+              ).then((data) => {
+                if (data.length >= 4) {
+                  setSlotStatus("full");
+                } else if (
+                  data.length >= 2 &&
+                  current_datetime.toString().split(" ")[0] !== "Sat"
+                ) {
+                  setSlotStatus("full");
+                } else {
+                  AppointmentService.postAppointmentUser(appointment.username, {
+                    slot_datetime: current_datetimeString,
+                  }).then((data) => {
+                    setSlotStatus("available");
+                  });
                 }
-              );
+              });
             }
           });
         }
@@ -125,33 +111,37 @@ const Home = (props) => {
           Our operating hours is from Monday to Saturday, 9.00 am to 6.00 pm
         </div>
         <div className="datepicker-container">
-          <DatePicker
-            showPopperArrow={false}
-            todayButton="Today"
-            placeholderText="Click to select a date"
-            minDate={new Date()}
-            maxDate={addDays(new Date(), 20)}
-            filterDate={(date) => date.getDay() !== 0}
-            showTimeSelect
-            popperClassName="some-custom-class"
-            popperPlacement="top-end"
-            popperModifiers={{
-              offset: {
-                enabled: true,
-                offset: "-172px, 0px",
-              },
-              preventOverflow: {
-                enabled: true,
-                escapeWithReference: false,
-                boundariesElement: "viewport",
-              },
-            }}
-            minTime={setHours(setMinutes(new Date(), 0), 9)}
-            maxTime={setHours(setMinutes(new Date(), 30), 16)}
-            dateFormat="dd/MM/yyyy h:mm aa"
-            selected={current_datetime}
-            onChange={(date) => setCurrent_datetime(date)}
-          />
+          {authContext.isAuthenticated ? (
+            <DatePicker
+              showPopperArrow={false}
+              todayButton="Today"
+              placeholderText="Click to select a date"
+              minDate={new Date()}
+              maxDate={addDays(new Date(), 20)}
+              filterDate={(date) => date.getDay() !== 0}
+              showTimeSelect
+              popperClassName="some-custom-class"
+              popperPlacement="top-end"
+              popperModifiers={{
+                offset: {
+                  enabled: true,
+                  offset: "-172px, 0px",
+                },
+                preventOverflow: {
+                  enabled: true,
+                  escapeWithReference: false,
+                  boundariesElement: "viewport",
+                },
+              }}
+              minTime={setHours(setMinutes(new Date(), 0), 9)}
+              maxTime={setHours(setMinutes(new Date(), 30), 16)}
+              dateFormat="dd/MM/yyyy h:mm aa"
+              selected={current_datetime}
+              onChange={(date) => setCurrent_datetime(date)}
+            />
+          ) : (
+            <DatePicker placeholderText="Click to select a date" disabled />
+          )}
         </div>
         <div className="button-container">
           <button className="button" onClick={handleClick}>

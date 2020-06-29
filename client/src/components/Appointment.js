@@ -12,14 +12,21 @@ const Appointment = ({ props }) => {
   useEffect(() => {
     AppointmentService.getAppointment(authContext.user.username).then(
       (data) => {
-        if (data) {
-          setAppointments(data);
-          console.log("USE EFFECT DATA");
-          console.log(data);
-        }
+        if (data) setAppointments(data);
       }
     );
   }, []);
+
+  const handleClick = () => {
+    appointments.map((appointment) => {
+      AppointmentService.cancelAppointment(appointment.username);
+    });
+    AppointmentService.getAppointment(authContext.user.username).then(
+      (data) => {
+        if (data) setAppointments(data);
+      }
+    );
+  };
 
   return (
     <div className="appointment-container">
@@ -29,6 +36,7 @@ const Appointment = ({ props }) => {
             <AppointmentItem
               key={appointment.username}
               appointment={appointment}
+              handleClick={handleClick}
             />
           );
         })}
