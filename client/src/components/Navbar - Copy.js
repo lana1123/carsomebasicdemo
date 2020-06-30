@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AuthService from "../Services/AuthService";
 import { AuthContext } from "../Context/AuthContext";
 import "./Navbar.css";
@@ -10,7 +10,8 @@ const Navbar = (props) => {
     AuthContext
   );
 
-  const onClickLogoutHandler = () => {
+  const onClickLogoutHandler = (e) => {
+    e.preventDefault();
     AuthService.logout().then((data) => {
       if (data.success) {
         setUser(data.user);
@@ -53,7 +54,7 @@ const Navbar = (props) => {
       <>
         <li>
           <a href="/">
-            <Link to="/home">
+            <Link to="/">
               <li className="navbar-ul-container-li">Home</li>
             </Link>
           </a>
@@ -97,4 +98,4 @@ const Navbar = (props) => {
   );
 };
 
-export default withRouter(Navbar);
+export default Navbar;

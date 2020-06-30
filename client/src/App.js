@@ -4,13 +4,17 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Navbar from "./components/Navbar";
 import Appointment from "./components/Appointment";
-// import PrivateRoute from "./hocs/PrivateRoute";
+import PrivateRoute from "./hocs/PrivateRoute";
 import UnprivateRoute from "./hocs/UnprivateRoute";
 import SideDrawer from "./components/SideDrawer";
 import Backdrop from "./components/Backdrop/Backdrop";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   state = {
     sideDrawerOpen: false,
   };
@@ -34,7 +38,10 @@ class App extends Component {
     return (
       <Router basename={process.env.PUBLIC_URL + "/"}>
         <div style={{ height: "100%" }}>
-          <Navbar drawerClickHandler={this.drawerToggleClickHandler} />
+          <Navbar
+            drawerClickHandler={this.drawerToggleClickHandler}
+            {...this.props}
+          />
           <SideDrawer show={this.state.sideDrawerOpen} />
           {backdrop}
           <Switch>
@@ -42,8 +49,8 @@ class App extends Component {
             <Route path="/home" component={Home} />
             <UnprivateRoute path="/login" component={Login} />
             <UnprivateRoute path="/register" component={Register} />
-            {/* <PrivateRoute path="/appointment" component={Appointment} /> */}
-            <Route path="/appointment" component={Appointment} />
+            <PrivateRoute path="/appointment" component={Appointment} />
+            {/* <Route path="/appointment" component={Appointment} /> */}
           </Switch>
         </div>
       </Router>

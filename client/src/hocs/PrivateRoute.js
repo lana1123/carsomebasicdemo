@@ -15,6 +15,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
               to={{ pathname: "/login", state: { from: props.location } }}
             />
           );
+        return <Component {...props} />;
       }}
     />
   );

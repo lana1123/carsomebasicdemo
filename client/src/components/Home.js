@@ -20,11 +20,23 @@ const Home = (props) => {
       (data) => {
         if (authContext.isAuthenticated) {
           setAppointments(data);
-          setSlotStatus("initialize");
         }
       }
     );
-  }, []);
+  }, [props.location]);
+
+  useEffect(() => {
+    if (appointments) {
+      appointments.map((appointment) => {
+        if (appointment.slot_datetime) {
+          setSlotStatus("existing");
+          return;
+        } else {
+          setSlotStatus("initialize");
+        }
+      });
+    }
+  }, [appointments]);
 
   //to check if the selected slot has already been booked. if yes, ask to choose another slot. else, proceed with the booking
   const handleClick = () => {
@@ -88,18 +100,16 @@ const Home = (props) => {
       return "This slot has been reserved for you. See you soon!";
     } else if (slotStatus === "invalid") {
       return "Cannot book for past and current hour";
-    } else if (slotStatus === "toConfirm") {
-      return "(Kindly click confirm to proceed)";
+    } else if (slotStatus === "initialize") {
+      return "(No date selected yet)";
     } else if (slotStatus === "existing") {
       return "You have already made an appointment. Kindly check the appointment page";
-    } else if (slotStatus === "error") {
-      return "An error has occurred. Kindly try again later";
     } else if (slotStatus === "full") {
       return "This slot is not available. Kindly choose another slot";
     } else if (slotStatus === "not logged in") {
       return "Kindly register and login to make an appointment";
     } else {
-      return "(No date selected yet)";
+      return "";
     }
   };
 
@@ -112,7 +122,7 @@ const Home = (props) => {
           Our operating hours is from Monday to Saturday, 9.00 am to 6.00 pm
         </div>
         <div className="datepicker-container">
-          {authContext.isAuthenticated ? (
+          {authContext.isAuthenticated && slotStatus === "initialize" ? (
             <DatePicker
               showPopperArrow={false}
               todayButton="Today"
