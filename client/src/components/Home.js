@@ -21,7 +21,7 @@ const Home = (props) => {
         if (authContext.isAuthenticated) {
           setAppointments(data);
           setSlotStatus("initialize");
-        } else setSlotStatus("not logged in");
+        }
       }
     );
   }, []);
