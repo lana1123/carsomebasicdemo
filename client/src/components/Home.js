@@ -151,7 +151,7 @@ const Home = (props) => {
               onChange={(date) => setCurrent_datetime(date)}
             />
           ) : (
-            <DatePicker placeholderText="Click to select a date" disabled />
+            <DatePicker disabled />
           )}
         </div>
         <div className="button-container">
@@ -163,7 +163,6 @@ const Home = (props) => {
         <div className="status">Status: {displayStatus()}</div>
       </div>
       {message ? <Message message={message} /> : null}
-      {/* <Appointment appointments={appointments} /> */}
     </div>
   );
 };
